@@ -1,0 +1,26 @@
+{
+  "name": "elternportal-schedule-exporter",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "lint:js": "eslint web/app.js",
+    "lint:css": "stylelint web/styles.css",
+    "lint:html": "htmlhint web/index.html",
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:html",
+    "build": "rm -rf dist && mkdir -p dist && terser web/app.js --compress --mangle --output dist/app.js && cleancss web/styles.css -o dist/styles.css && html-minifier-terser web/index.html --collapse-whitespace --remove-comments --minify-css true --minify-js true --output dist/index.html"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "clean-css-cli": "^5.6.3",
+    "eslint": "^10.0.1",
+    "globals": "^15.15.0",
+    "html-minifier-terser": "^7.2.0",
+    "htmlhint": "^1.4.0",
+    "stylelint": "^16.14.1",
+    "stylelint-config-standard": "^36.0.1",
+    "terser": "^5.37.0"
+  },
+  "overrides": {
+    "minimatch": "^10.2.1"
+  }
+}

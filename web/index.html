@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stundenplaner</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📅 Stundenplaner</h1>
+            <p>Eltern-Portal Stundenplan-HTML hochladen und automatisch formatieren</p>
+            <details class="howto-details">
+                <summary>❓ Wie speichere ich die HTML-Datei?</summary>
+                <ol class="howto-steps">
+                    <li>Im Eltern-Portal zur <strong>Stundenplan-Seite</strong> navigieren</li>
+                    <li>Tastenkombination <kbd>Strg</kbd>+<kbd>S</kbd> drücken (Mac: <kbd>⌘</kbd>+<kbd>S</kbd>)<br>
+                        — oder Rechtsklick → <strong>„Seite speichern unter …"</strong></li>
+                    <li>Als Typ <strong>„Webseite, nur HTML"</strong> wählen<br>
+                        <em>(nicht „Vollständige Webseite"!)</em></li>
+                    <li>Gespeicherte <code>.html</code>-Datei hier hochladen</li>
+                </ol>
+            </details>
+        </header>
+
+        <!-- File Upload Section -->
+        <section class="upload-section">
+            <div id="dropZone" class="drop-zone">
+                <div class="drop-zone-content">
+                    <svg class="upload-icon" viewBox="0 0 24 24" width="48" height="48">
+                        <path fill="currentColor" d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/>
+                    </svg>
+                    <p class="drop-text">HTML-Datei hier ablegen</p>
+                    <p class="drop-subtext">oder</p>
+                    <button class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                        Datei auswählen
+                    </button>
+                    <input type="file" id="fileInput" accept=".html,.htm" style="display: none;">
+                </div>
+            </div>
+        </section>
+
+        <!-- Subject Manager Section -->
+        <section id="subjectManager" class="subject-manager" style="display: none;">
+            <div class="section-header">
+                <h2>🎨 Fächer & Farben</h2>
+                <div class="section-actions">
+                    <button id="exportConfig" class="btn-secondary" title="Konfiguration exportieren">
+                        ⬇ Export
+                    </button>
+                    <button id="importConfig" class="btn-secondary" title="Konfiguration importieren">
+                        ⬆ Import
+                    </button>
+                    <input type="file" id="configFileInput" accept=".json" style="display: none;">
+                    <button id="resetConfig" class="btn-secondary" title="Auf Standard zurücksetzen">
+                        🔄 Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Known Subjects -->
+            <div class="subjects-container">
+                <h3>Bekannte Fächer</h3>
+                <div id="knownSubjects" class="subject-list"></div>
+            </div>
+
+            <!-- Unknown Subjects -->
+            <div id="unknownSection" class="subjects-container" style="display: none;">
+                <h3>⚠️ Neue Fächer gefunden</h3>
+                <p class="info-text">Bitte Farben für die folgenden Fächer zuweisen:</p>
+                <div id="unknownSubjects" class="subject-list"></div>
+            </div>
+
+            <!-- Add Custom Subject -->
+            <div class="add-subject-section">
+                <h3>➕ Neues Fach hinzufügen</h3>
+                <div class="add-subject-form">
+                    <input type="text" id="newSubjectAbbr" placeholder="Abkürzung (z.B. BIO)" maxlength="10">
+                    <input type="text" id="newSubjectName" placeholder="Name (z.B. Biologie)" maxlength="50">
+                    <input type="color" id="newSubjectColor" value="#00B050">
+                    <select id="newSubjectTextColor">
+                        <option value="white">Weiß</option>
+                        <option value="black">Schwarz</option>
+                    </select>
+                    <button id="addSubjectBtn" class="btn-primary">Hinzufügen</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Preview Section -->
+        <section id="previewSection" class="preview-section" style="display: none;">
+            <div class="section-header">
+                <h2>📋 Vorschau</h2>
+                <div class="section-actions">
+                    <button id="printBtn" class="btn-primary">🖨️ Drucken / PDF</button>
+                </div>
+            </div>
+            <div id="previewContainer" class="preview-container"></div>
+        </section>
+
+        <!-- Privacy Section -->
+        <section class="privacy-section">
+            <div class="privacy-banner">
+                <div class="privacy-banner-icon">🛡️</div>
+                <div class="privacy-banner-text">
+                    <strong>Nichts verlässt deinen Browser.</strong>
+                    <p>Die hochgeladene HTML-Datei wird vollständig lokal verarbeitet — kein Server, kein Upload, keine Tracker, keine Verbindung nach außen.</p>
+                </div>
+            </div>
+
+            <details class="privacy-details">
+                <summary>🔍 Was steht in der Elternportal-HTML-Datei?</summary>
+                <div class="privacy-details-body">
+                    <p class="privacy-intro">Eine gespeicherte Elternportal-Seite enthält mehr als nur den Stundenplan. Hier eine vollständige Übersicht — und was diese App davon tatsächlich verwendet:</p>
+
+                    <table class="privacy-table">
+                        <thead>
+                            <tr>
+                                <th>Inhalt</th>
+                                <th>Beispiel</th>
+                                <th>Von dieser App verwendet?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="privacy-row-used">
+                                <td>Klassenname</td>
+                                <td><code>5a</code></td>
+                                <td class="privacy-yes">✔ Ja — als Überschrift</td>
+                            </tr>
+                            <tr class="privacy-row-used">
+                                <td>Stundenplan-Tabelle</td>
+                                <td>Fachkürzel, Räume, Zeiten</td>
+                                <td class="privacy-yes">✔ Ja — der eigentliche Zweck</td>
+                            </tr>
+                            <tr class="privacy-row-ignored">
+                                <td>Namen aller Kinder im Account</td>
+                                <td><code>Lena Muster (6f), Max Muster (5a)</code></td>
+                                <td class="privacy-no">✖ Nein — ignoriert</td>
+                            </tr>
+                            <tr class="privacy-row-ignored">
+                                <td>Interne Kind-IDs</td>
+                                <td><code>value="4711"</code></td>
+                                <td class="privacy-no">✖ Nein — ignoriert</td>
+                            </tr>
+                            <tr class="privacy-row-ignored">
+                                <td>Namen aller Lehrkräfte</td>
+                                <td>Dr. Anna Weber, Peter Braun …</td>
+                                <td class="privacy-no">✖ Nein — ignoriert</td>
+                            </tr>
+                            <tr class="privacy-row-ignored">
+                                <td>Letzter Login-Zeitstempel</td>
+                                <td><code>letzter Login: heute um 16:52 Uhr</code></td>
+                                <td class="privacy-no">✖ Nein — ignoriert</td>
+                            </tr>
+                            <tr class="privacy-row-ignored">
+                                <td>Schulveranstaltungen / Schülergruppen</td>
+                                <td>Schulandheim, Verkehrserziehung …</td>
+                                <td class="privacy-no">✖ Nein — ignoriert</td>
+                            </tr>
+                            <tr class="privacy-row-ignored">
+                                <td>Schul-Kontaktdaten (Impressum)</td>
+                                <td>Adresse, Telefon, E-Mail</td>
+                                <td class="privacy-no">✖ Nein — ignoriert</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="privacy-storage">
+                        <h4>Was wird gespeichert?</h4>
+                        <ul>
+                            <li><strong>Browser-LocalStorage:</strong> nur deine Farbkonfiguration für Fächer — keine Dateiinhalte, keine Personendaten.</li>
+                            <li><strong>Manuelle Zellanpassungen</strong> (Fach/Raum bearbeiten) existieren nur im Arbeitsspeicher und sind nach dem Neuladen der Seite weg.</li>
+                            <li>Die hochgeladene Datei selbst wird <strong>nirgends</strong> gespeichert.</li>
+                        </ul>
+                    </div>
+
+                    <p class="privacy-note">
+                        💡 Die HTML-Datei enthält sensible Daten (Kindernamen, Lehrernamen). Behandle sie entsprechend sorgfältig und teile sie nicht mit Dritten.
+                    </p>
+                </div>
+            </details>
+        </section>
+        <footer class="site-footer">
+            <a href="https://github.com/macmacs/stundenplaner" target="_blank" rel="noopener noreferrer" class="github-link">
+                <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+                    <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/>
+                </svg>
+                macmacs/stundenplaner
+            </a>
+        </footer>
+    </div>
+
+    <!-- Cell Editor Modal -->
+    <div id="cellEditorModal" class="modal-overlay" onclick="if(event.target===this) closeCellEditor()">
+        <div class="modal-content">
+            <h3>Stunde bearbeiten</h3>
+            <div class="modal-field">
+                <label for="cellEditorSubject">Fach:</label>
+                <input type="text" id="cellEditorSubject" list="subjectSuggestions"
+                       placeholder="z.B. M, E, D …"
+                       onkeydown="if(event.key==='Enter') document.getElementById('cellEditorRoom').focus()">
+                <datalist id="subjectSuggestions"></datalist>
+            </div>
+            <div class="modal-field">
+                <label for="cellEditorRoom">Raum:</label>
+                <input type="text" id="cellEditorRoom"
+                       placeholder="z.B. 201"
+                       onkeydown="if(event.key==='Enter') saveCellEdit()">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-secondary" onclick="closeCellEditor()">Abbrechen</button>
+                <button class="btn-primary" onclick="saveCellEdit()">Speichern</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
